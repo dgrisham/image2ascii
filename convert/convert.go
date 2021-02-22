@@ -3,15 +3,17 @@ package convert
 
 import (
 	"bytes"
-	"github.com/qeesung/image2ascii/ascii"
 	"image"
 	"image/color"
+	"log"
+	"os"
+
+	"github.com/dgrisham/image2ascii/ascii"
+
 	// Support decode jpeg image
 	_ "image/jpeg"
 	// Support deocde the png image
 	_ "image/png"
-	"log"
-	"os"
 )
 
 // Options to convert the image to ASCII

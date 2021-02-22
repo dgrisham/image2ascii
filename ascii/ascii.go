@@ -4,10 +4,11 @@
 package ascii
 
 import (
-	"github.com/aybabtme/rgbterm"
 	"image/color"
 	"math"
 	"reflect"
+
+	"github.com/aybabtme/rgbterm"
 )
 
 // CharPixel is converted pixel ascii
@@ -28,7 +29,8 @@ type Options struct {
 
 // DefaultOptions that contains the default pixels
 var DefaultOptions = Options{
-	Pixels:   []byte(" .,:;i1tfLCG08@"),
+	// Pixels:   []byte(" .,:;i1tfLCG08@"),
+	Pixels:   []byte(" .,:;-=+*#%80&@"),
 	Reversed: false,
 	Colored:  true,
 }

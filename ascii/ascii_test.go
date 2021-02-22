@@ -2,10 +2,11 @@ package ascii
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"image/color"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // TestNewOptions create options with default values
@@ -14,7 +15,7 @@ func TestNewOptions(t *testing.T) {
 	assertions := assert.New(t)
 	assertions.True(newOptions.Colored, "Default colored option should be true")
 	assertions.False(newOptions.Reversed, "Default reverse option should be false")
-	assertions.Equal(" .,:;i1tfLCG08@", string(newOptions.Pixels), "Default pixels should be  .,:;i1tfLCG08@")
+	assertions.Equal(" .,:;-=+*#%80&@", string(newOptions.Pixels), "Default pixels should be ' .,:;-=+*#%80&@'")
 }
 
 // TestMergeOptions test merge the options

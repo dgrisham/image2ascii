@@ -4,20 +4,24 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/qeesung/image2ascii/convert"
+	"os"
+
 	_ "image/jpeg"
 	_ "image/png"
-	"os"
+
+	"github.com/dgrisham/image2ascii/convert"
 )
 
-var imageFilename string
-var ratio float64
-var fixedWidth int
-var fixedHeight int
-var fitScreen bool
-var stretchedScreen bool
-var colored bool
-var reversed bool
+var (
+	imageFilename   string
+	ratio           float64
+	fixedWidth      int
+	fixedHeight     int
+	fitScreen       bool
+	stretchedScreen bool
+	colored         bool
+	reversed        bool
+)
 
 var convertDefaultOptions = convert.DefaultOptions
 

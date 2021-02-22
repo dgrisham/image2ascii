@@ -2,11 +2,12 @@ package convert
 
 import (
 	"fmt"
-	terminal2 "github.com/qeesung/image2ascii/terminal"
-	"github.com/qeesung/image2ascii/terminal/mocks"
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
+
+	terminal2 "github.com/dgrisham/image2ascii/terminal"
+	"github.com/dgrisham/image2ascii/terminal/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestScaleImageWithFixedHeight test scale the image by fixed height
