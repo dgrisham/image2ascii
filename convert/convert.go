@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/aybabtme/rgbterm"
 	"github.com/dgrisham/image2ascii/ascii"
 
 	// Support decode jpeg image
@@ -102,20 +103,53 @@ func (converter *ImageConverter) Image2ASCIIMatrix(image image.Image, imageConve
 	sz := newImage.Bounds()
 	newWidth := sz.Max.X
 	newHeight := sz.Max.Y
-	rawCharValues := make([]string, 0, int(newWidth*newHeight+newWidth))
+	rawStringValues := make([]string, 0, int(newWidth*newHeight+newWidth))
+
 	for i := 0; i < int(newHeight); i++ {
+		var pixelsToConvert []color.Color
 		for j := 0; j < int(newWidth); j++ {
+
 			pixel := color.NRGBAModel.Convert(newImage.At(j, i))
+
+			if pixelsToConvert == nil {
+				pixelsToConvert = append(pixelsToConvert, pixel)
+				continue
+			}
+
+			if j == int(newWidth)-1 {
+				pixelsToConvert = append(pixelsToConvert, pixel)
+			} else {
+
+				// Convert the pixel to ascii char
+				options := ascii.NewOptions()
+				options.Colored = imageConvertOptions.Colored
+
+				pixelConverter := ascii.NewPixelConverter()
+
+				pixelASCII := pixelConverter.ConvertPixelToPixelASCII(pixel, &options)
+				cur := rgbterm.FgByte(byte(0), pixelASCII.R, pixelASCII.G, pixelASCII.B)
+
+				savedPixelASCII := pixelConverter.ConvertPixelToPixelASCII(pixelsToConvert[0], &options)
+				prev := rgbterm.FgByte(byte(0), savedPixelASCII.R, savedPixelASCII.G, savedPixelASCII.B)
+
+				if string(cur) == string(prev) { // same color as previous pixel, aggregate
+					pixelsToConvert = append(pixelsToConvert, pixel)
+					continue
+				}
+			}
+
 			// Convert the pixel to ascii char
 			pixelConvertOptions := ascii.NewOptions()
 			pixelConvertOptions.Colored = imageConvertOptions.Colored
 			pixelConvertOptions.Reversed = imageConvertOptions.Reversed
-			rawChar := converter.pixelConverter.ConvertPixelToASCII(pixel, &pixelConvertOptions)
-			rawCharValues = append(rawCharValues, rawChar)
+
+			rawString := converter.pixelConverter.ConvertPixelsToASCII(pixelsToConvert, &pixelConvertOptions)
+			rawStringValues = append(rawStringValues, rawString)
+			pixelsToConvert = []color.Color{pixel}
 		}
-		rawCharValues = append(rawCharValues, "\n")
+		rawStringValues = append(rawStringValues, "\n")
 	}
-	return rawCharValues
+	return rawStringValues
 }
 
 // Image2ASCIIString converts a image to ascii matrix, and the join the matrix to a string

@@ -4,6 +4,7 @@
 package ascii
 
 import (
+	"bytes"
 	"image/color"
 	"math"
 	"reflect"
@@ -57,6 +58,7 @@ func NewPixelConverter() PixelConverter {
 // PixelConverter define the convert pixel operation
 type PixelConverter interface {
 	ConvertPixelToASCII(pixel color.Color, options *Options) string
+	ConvertPixelsToASCII(pixels []color.Color, options *Options) string
 	ConvertPixelToPixelASCII(pixel color.Color, options *Options) CharPixel
 }
 
@@ -104,6 +106,29 @@ func (converter PixelASCIIConverter) ConvertPixelToASCII(pixel color.Color, opti
 	return string([]byte{rawChar})
 }
 
+// ConvertPixelToASCII converts a pixel to a ASCII char string
+func (converter PixelASCIIConverter) ConvertPixelsToASCII(pixels []color.Color, options *Options) string {
+	if len(pixels) == 0 {
+		return ""
+	}
+
+	convertOptions := NewOptions()
+	convertOptions.mergeOptions(options)
+
+	buffer := new(bytes.Buffer)
+	for _, pixel := range pixels {
+		pixelASCII := converter.ConvertPixelToPixelASCII(pixel, options)
+		buffer.WriteByte(pixelASCII.Char)
+	}
+
+	if convertOptions.Colored {
+		pixelASCII := converter.ConvertPixelToPixelASCII(pixels[0], options)
+		r, g, b := pixelASCII.R, pixelASCII.G, pixelASCII.B
+		return converter.decorateStringWithColor(r, g, b, buffer.String())
+	}
+	return buffer.String()
+}
+
 func (converter PixelASCIIConverter) roundValue(value float64) int {
 	return int(math.Floor(value + 0.5))
 }
@@ -121,7 +146,11 @@ func (converter PixelASCIIConverter) intensity(r, g, b, a uint64) uint64 {
 }
 
 // decorateWithColor decorate the raw char with the color base on r,g,b value
+func (converter PixelASCIIConverter) decorateStringWithColor(r, g, b uint8, str string) string {
+	return rgbterm.FgString(str, uint8(r), uint8(g), uint8(b))
+}
+
+// decorateWithColor decorate the raw char with the color base on r,g,b value
 func (converter PixelASCIIConverter) decorateWithColor(r, g, b uint8, rawChar byte) string {
-	coloredChar := rgbterm.FgString(string([]byte{rawChar}), uint8(r), uint8(g), uint8(b))
-	return coloredChar
+	return rgbterm.FgString(string([]byte{rawChar}), uint8(r), uint8(g), uint8(b))
 }
