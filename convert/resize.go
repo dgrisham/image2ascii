@@ -42,7 +42,8 @@ func initResizeResolver(handler *ImageResizeHandler) {
 	// scaled by ratio
 	sizeResolvers = append(sizeResolvers, imageSizeResolver{
 		match: func(options *Options) bool {
-			return options.Ratio != 1
+			// return options.Ratio != 1
+			return true
 		},
 		compute: func(sz image.Rectangle, options *Options, handler *ImageResizeHandler) (width, height int, err error) {
 			ratio := options.Ratio
